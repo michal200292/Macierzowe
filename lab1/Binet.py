@@ -7,7 +7,7 @@ def binet(A, B):
     k, l = B.shape
 
     if n != k:
-        return None
+        raise ValueError("Incorrect matrix dimensions")
 
     if m == 1 or n == 1 or l == 1:
         return multiply(A, B)
@@ -24,17 +24,28 @@ def binet(A, B):
     B21 = B[n:, :l]
     B22 = B[n:, l:]
 
-    C11 = binet(A11, B11) + binet(A12, B21)
-    C12 = binet(A11, B12) + binet(A12, B22)
-    C21 = binet(A21, B11) + binet(A22, B21)
-    C22 = binet(A21, B12) + binet(A22, B22)
+    P1 = binet(A11, B11)
+    P2 = binet(A12, B21)
+    P3 = binet(A11, B12)
+    P4 = binet(A12, B22)
+    P5 = binet(A21, B11)
+    P6 = binet(A22, B21)
+    P7 = binet(A21, B12)
+    P8 = binet(A22, B22)
+
+    count_mul = P1[2] + P2[2] + P3[2] + P4[2] + P5[2] + P6[2] + P7[2] + P8[2]
+    count_add = P1[1] + P2[1] + P3[1] + P4[1] + P5[1] + P6[1] + P7[1] + P8[1]
+    count_add += 4 * m * l
+
+    C11 = P1[0] + P2[0]
+    C12 = P3[0] + P4[0]
+    C21 = P5[0] + P6[0]
+    C22 = P7[0] + P8[0]
 
     C = np.zeros((2*m, 2*l), dtype=np.double)
-
-    C[:m,:l] = C11
+    C[:m, :l] = C11
     C[:m, l:] = C12
     C[m:, :l] = C21
     C[m:, l:] = C22
-
-    return C
+    return C, count_add, count_mul
 

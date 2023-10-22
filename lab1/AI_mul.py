@@ -23,9 +23,9 @@ def ai(A, B):
     k, l = B.shape
 
     if n != k:
-        return None
+        raise ValueError("Incorrect matrix dimensions")
 
-    if not (m % 4 == 0 and n % 5 == 0 and k % 5 == 0 and l % 5 == 0):
+    if not (m % 4 == 0 and n % 5 == 0 and l % 5 == 0):
         return multiply(A, B)
 
     a = split_matrix(A, 4, 5)
@@ -109,10 +109,16 @@ def ai(A, B):
     h[71] = ai(-a[1][0] - a[1][3] - a[3][0] - a[3][3], b[3][0] + b[3][1] + b[3][2])
     h[72] = ai(a[0][2] - a[0][3] - a[0][4] + a[1][2] - a[1][3] - a[1][4], b[0][0] + b[0][1] - b[0][3] + b[1][3] + b[4][1] - b[4][3])
     h[73] = ai(a[1][0] - a[1][2] + a[1][3] - a[2][0] + a[2][2] - a[2][3], b[3][0] + b[3][1] + b[3][4])
-    h[74] = -ai(a[0][1] + a[0][3] - a[1][1] - a[1][4] - a[2][0] + a[2][1] + a[2][3] + a[2][4] - a[3][0] + a[3][1], b[1][4])
+    h[74] = ai(-a[0][1] - a[0][3] + a[1][1] + a[1][4] + a[2][0] - a[2][1] - a[2][3] - a[2][4] + a[3][0] - a[3][1], b[1][4])
     h[75] = ai(a[0][2] + a[2][2], -b[0][0] + b[0][3] - b[0][4] + b[1][3] + b[2][3] - b[2][4])
 
     c = [[NDArray for _ in range(5)] for _ in range(4)]
+    count_add, count_mul = 168*height*width + 192*width*width, 0
+
+    for i in range(76):
+        count_add += h[i][1]
+        count_mul += h[i][2]
+        h[i] = h[i][0]
 
     c[0][0] = -h[9] + h[11] + h[13] - h[14] - h[15] + h[52] + h[4] - h[65] - h[6]
     c[1][0] = h[9] + h[10] - h[11] + h[12] + h[14] + h[15] - h[16] - h[43] + h[50]
@@ -135,11 +141,11 @@ def ai(A, B):
     c[2][4] = -h[9] + h[11] - h[14] + h[27] + h[28] - h[1] - h[29] - h[2] + h[45] + h[3] - h[74]
     c[3][4] = -h[11] - h[28] + h[29] - h[33] + h[34] + h[38] + h[2] - h[44] + h[56] + h[58]
 
+    count_add += 180*height*width
     C = np.zeros((m, l), dtype=np.double)
 
     for i in range(4):
         for j in range(5):
             C[i * height: (i + 1) * height, j * width: (j + 1) * width] = c[i][j]
 
-    return C
-
+    return C, count_add, count_mul

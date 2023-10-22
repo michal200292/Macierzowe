@@ -6,18 +6,15 @@ def multiply(A, B):
     k, l = B.shape
 
     if n != k:
-        return None
+        raise ValueError("Incorrect matrix dimensions")
 
     C = np.zeros((m, l), dtype=np.double)
 
     for row in range(m):
         for col in range(l):
-            value = 0.0
+            C[row][col] = A[row][0] * B[0][col]
+            for curr in range(1, n):
+                C[row][col] += A[row][curr] * B[curr][col]
 
-            for curr in range(n):
-                value += A[row][curr] * B[curr][col]
-
-            C[row][col] = value
-
-    return C
+    return C, n*m*(l-1), n*m*l
 
