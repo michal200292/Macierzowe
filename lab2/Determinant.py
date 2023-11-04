@@ -3,11 +3,10 @@ from LU import lu
 
 
 def determinant(A):
-    L, U = lu(A)
-
+    L, U, count = lu(A)
     det = np.double(1)
-
     for i in range(A.shape[0]):
         det *= U[i][i]
 
-    return det
+    count.mul += A.shape[0]
+    return det, count
