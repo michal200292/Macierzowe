@@ -2,14 +2,15 @@ import numpy as np
 from Matrix_inverse import inverse
 from LU import lu
 from Determinant import determinant
+from lab1.Binet import binet
 
 
 def norm2(matrix):
     return np.square(np.linalg.norm(matrix))
 
 
-def test_determinant(matrix, eps=1e-9):
-    det, _ = determinant(matrix)
+def test_determinant(matrix, mul_func=binet, eps=1e-9):
+    det, _ = determinant(matrix, mul_func)
     numpy_det = np.linalg.det(matrix)
     if abs(det - numpy_det) > eps:
         raise AssertionError("Something wrong?!")
@@ -17,8 +18,8 @@ def test_determinant(matrix, eps=1e-9):
         print("Test passed")
 
 
-def test_inverse(matrix, eps=1e-9):
-    inverted, _ = inverse(matrix)
+def test_inverse(matrix, mul_func=binet, eps=1e-9):
+    inverted, _ = inverse(matrix, mul_func)
     np_inverted = np.linalg.inv(matrix)
     if norm2(inverted - np_inverted) > eps:
         raise AssertionError("Something wrong?!")
@@ -26,9 +27,9 @@ def test_inverse(matrix, eps=1e-9):
         print("Test passed")
 
 
-def test_lu(matrix, eps=1e-9):
+def test_lu(matrix, mul_func=binet, eps=1e-9):
     n = matrix.shape[0]
-    lower, upper, _ = lu(matrix)
+    lower, upper, _ = lu(matrix, mul_func)
     if norm2(np.diag(lower) - np.ones(n)) > eps:
         raise AssertionError("Elements on a diagonal of lower matrix are not ones")
 
