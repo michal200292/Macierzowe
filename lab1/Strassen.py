@@ -32,9 +32,8 @@ def strassen(A, B):
     P6 = strassen(A21 - A11, B11 + B12)
     P7 = strassen(A12 - A22, B21 + B22)
 
-    count_mul = P1[2] + P2[2] + P3[2] + P4[2] + P5[2] + P6[2] + P7[2]
-    count_add = P1[1] + P2[1] + P3[1] + P4[1] + P5[1] + P6[1] + P7[1]
-    count_add += 18 * m * l
+    counter = P1[1] + P2[1] + P3[1] + P4[1] + P5[1] + P6[1] + P7[1]
+    counter.add += 18 * m * l
 
     C11 = P1[0] + P4[0] - P5[0] + P7[0]
     C12 = P3[0] + P5[0]
@@ -48,5 +47,5 @@ def strassen(A, B):
     C[m:, :l] = C21[0]
     C[m:, l:] = C22[0]
 
-    return C, count_add, count_mul
+    return C, counter
 

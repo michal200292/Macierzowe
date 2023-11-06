@@ -11,7 +11,7 @@ class Counter:
                        self.div + other.div)
 
     def __repr__(self):
-        return f"{self.add}, {self.mul}, {self.div}"
+        return f"Counter({self.add}, {self.mul}, {self.div})"
 
     def get_params(self):
         return self.add, self.mul, self.div

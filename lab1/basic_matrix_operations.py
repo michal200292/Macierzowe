@@ -1,4 +1,5 @@
 import numpy as np
+from Arithmetic_counter import Counter
 
 
 def multiply(A, B):
@@ -16,5 +17,5 @@ def multiply(A, B):
             for curr in range(1, n):
                 C[row][col] += A[row][curr] * B[curr][col]
 
-    return C, n*m*(l-1), n*m*l
+    return C, Counter(n*m*(l-1), n*m*l, 0)
 
