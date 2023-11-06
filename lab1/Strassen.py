@@ -42,10 +42,10 @@ def strassen(A, B):
 
     C = np.zeros((2*m, 2*l), dtype=np.double)
 
-    C[:m, :l] = C11[0]
-    C[:m, l:] = C12[0]
-    C[m:, :l] = C21[0]
-    C[m:, l:] = C22[0]
+    C[:m, :l] = C11
+    C[:m, l:] = C12
+    C[m:, :l] = C21
+    C[m:, l:] = C22
 
     return C, counter
 
