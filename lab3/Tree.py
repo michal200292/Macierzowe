@@ -11,8 +11,32 @@ class Tree:
         return self.root.eval(self.length)
 
     def draw(self):
-        image_matrix = np.ones((self.length, self.length))
-        self.root.draw(image_matrix, 0, 0, self.length)
+        def tree_depth(root):
+            if isinstance(root, Leaf):
+                return 0
+            else:
+                max_value = 1 + max(tree_depth(root.left_up), tree_depth(root.right_up), tree_depth(root.left_low),
+                                    tree_depth(root.right_low))
+                return max_value
+
+        def get_draw_sizes(root):
+            depth = tree_depth(root)
+
+            draw_sizes = []
+
+            current_size = self.length // (2 ** depth)
+
+            for _ in range(depth + 1):
+                draw_sizes.append(current_size)
+
+                current_size = 2 * draw_sizes[-1] + 1
+
+            return draw_sizes[::-1]
+
+        draw_sizes = get_draw_sizes(self.root)
+
+        image_matrix = np.ones((draw_sizes[0], draw_sizes[0]))
+        self.root.draw(image_matrix, 0, 0, draw_sizes)
         return image_matrix*255
 
 
@@ -22,7 +46,7 @@ class Node(ABC):
         pass
 
     @abstractmethod
-    def draw(self, image_matrix, left, up, length):
+    def draw(self, image_matrix, left, up, draw_sizes, depth):
         pass
 
 
@@ -42,12 +66,16 @@ class InternalNode(Node):
         matrix[length:, length:] = self.right_low.eval(length)
         return matrix
 
-    def draw(self, im_mat, l, u, lg):
-        lg //= 2
-        self.left_up.draw(im_mat, l, u, lg)
-        self.right_up.draw(im_mat, l+lg, u, lg)
-        self.left_low.draw(im_mat, l, u+lg, lg)
-        self.right_low.draw(im_mat, l+lg, u+lg, lg)
+    def draw(self, im_mat, l, u, sizes, depth=0):
+        k = sizes[depth] // 2
+
+        im_mat[u: u + sizes[depth], l + k] = 0 #Siatka
+        im_mat[u + k, l: l + sizes[depth]] = 0 #
+
+        self.left_up.draw(im_mat, l, u, sizes, depth + 1)
+        self.right_up.draw(im_mat, l+k+1, u, sizes, depth + 1)
+        self.left_low.draw(im_mat, l, u+k+1, sizes, depth + 1)
+        self.right_low.draw(im_mat, l+k+1, u+k+1, sizes, depth + 1)
 
 
 class Leaf(Node):
@@ -61,8 +89,10 @@ class Leaf(Node):
             return 0
         return self.U @ self.V
 
-    def draw(self, image_matrix, left, up, length):
+    def draw(self, image_matrix, left, up, sizes, depth=0):
         if not self.zeros:
+            length = sizes[depth]
+
             k = self.V.shape[0]
             image_matrix[up:up+length, left:left+k] = 0
             image_matrix[up:up+k, left:left+length] = 0
