@@ -28,7 +28,7 @@ def power_of_two(x):
 def compress(matrix, min_value, max_rank, length):
     eps = 1e-10
     if length == 1:
-        return Leaf(U=matrix, V=np.array([1]))
+        return Leaf(U=matrix, V=np.array([1])) if abs(matrix[0, 0]) > eps else Leaf(zeros=True)
     else:
         if length <= max_rank + 1:
             max_rank = length - 1
