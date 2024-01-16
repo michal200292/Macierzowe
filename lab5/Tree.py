@@ -131,7 +131,3 @@ class Leaf(Node):
             return np.zeros(vector.shape[0]).reshape(-1, 1)
         else:
             return self.U @ np.dot(self.V, vector).reshape(-1, 1)
-
-
-
-

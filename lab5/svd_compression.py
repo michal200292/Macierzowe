@@ -27,12 +27,13 @@ def power_of_two(x):
 
 def compress(matrix, min_value, max_rank, length):
     eps = 1e-10
-    if length == 1:
+    if length <= 1:
         if isinstance(matrix, float):
             matrix = np.array([[matrix]])
-        if len(matrix.shape) == 1:
-            matrix = matrix.reshape((-1, 1))
-        return Leaf(U=matrix, V=np.array([1])) if abs(matrix[0, 0]) > eps else Leaf(zeros=True)
+        if not matrix:
+            return Leaf(zeros=True)
+        value = matrix.item() if len(matrix.shape) == 1 else matrix.item(0)
+        return Leaf(U=np.array([[value]]), V=np.array([[1]])) if value > eps else Leaf(zeros=True)
     else:
         if length <= max_rank + 1:
             max_rank = length - 1
